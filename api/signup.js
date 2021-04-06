@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
 			profilePicUrl: req.body.profilePicUrl || userPng,
 		})
 
-		user.password = await bcrypt.hash(password, 10)
+		user.password = await bcrypt.hash(password, 3)
 		await user.save()
 
 		let profileFields = {}

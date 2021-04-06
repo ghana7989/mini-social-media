@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
   if (!isEmail(email)) return res.status(401).send("Invalid Email");
 
   if (password.length < 6) {
-    return res.status(401).send("Password must be atleast 6 characters");
+    return res.status(401).send("Password must be at least 6 characters");
   }
 
   try {
@@ -21,12 +21,14 @@ router.post("/", async (req, res) => {
     );
 
     if (!user) {
-      return res.status(401).send("Invalid Credentials");
+      return res.status(401).send("Invalid Credentials.Either username doesn't exist or password is incorrect");
     }
 
     const isPassword = await bcrypt.compare(password, user.password);
     if (!isPassword) {
-      return res.status(401).send("Invalid Credentials");
+      return res
+				.status(401)
+				.send("Invalid Credentials.Either username doesn't exist or password is incorrect")
     }
 
     const payload = { userId: user._id };
