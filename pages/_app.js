@@ -1,17 +1,54 @@
-import App from "next/app";
-import Layout from "../components/Layout/Layout";
-import "semantic-ui-css/semantic.min.css";
+/** @format */
+
+import App from 'next/app'
+import Layout from '../components/Layout/Layout'
+import axios from 'axios'
+import baseUrl from '../utils/baseUrl'
+import {destroyCookie, parseCookies} from 'nookies'
+import {redirectUser} from '../utils/authUser'
+import 'semantic-ui-css/semantic.min.css'
 
 class MyApp extends App {
-  render() {
-    const { Component } = this.props;
+	static async getInitialProps({Component, ctx}) {
+		const {token} = parseCookies(ctx)
+		let pageProps = {}
+		const protectedRoutes = ctx.pathname === '/'
 
-    return (
-      <Layout>
-        <Component />
-      </Layout>
-    );
-  }
+		if (!token) {
+			protectedRoutes && redirectUser(ctx, '/login')
+		} else {
+			if (Component.getInitialProps) {
+				pageProps = await Component.getInitialProps(ctx)
+			}
+
+			try {
+				const res = await axios.get(`${baseUrl}/api/auth`, {
+					headers: {Authorization: token},
+				})
+
+				const {user, userFollowStats} = res.data
+
+				if (user) !protectedRoutes && redirectUser(ctx, '/')
+
+				pageProps.user = user
+				pageProps.userFollowStats = userFollowStats
+			} catch (error) {
+				destroyCookie(ctx, 'token')
+				redirectUser(ctx, '/login')
+			}
+		}
+
+		return {pageProps}
+	}
+	render() {
+		const {Component, pageProps} = this.props
+
+		return (
+			<Layout {...pageProps}>
+				<Component {...pageProps} />
+			</Layout>
+		)
+	}
 }
 
-export default MyApp;
+export default MyApp
