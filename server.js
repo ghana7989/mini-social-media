@@ -16,14 +16,12 @@ const PORT = process.env.PORT || 3000
 nextApp.prepare().then(() => {
 	app.use('/api/signup', require('./api/signup'))
 	app.use('/api/auth', require('./api/auth'))
+	app.use('/api/search', require('./api/search'))
+  app.use('/api/posts', require('./api/posts'))
 
 	app.all('*', (req, res) => handle(req, res))
 
 	server.listen(PORT, err => {
-		if (err) {
-			server.close()
-			throw err
-		}
 		console.log(`Express server running ${PORT}`)
 	})
 })
