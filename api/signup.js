@@ -1,95 +1,98 @@
-const express = require("express");
-const router = express.Router();
-const UserModel = require("../models/UserModel");
-const ProfileModel = require("../models/ProfileModel");
-const FollowerModel = require("../models/FollowerModel");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const isEmail = require("validator/lib/isEmail");
-const userPng =
-  "https://res.cloudinary.com/indersingh/image/upload/v1593464618/App/user_mklcpl.png";
+/** @format */
 
-const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
+const express = require('express')
+const router = express.Router()
+const UserModel = require('../models/UserModel')
+const ProfileModel = require('../models/ProfileModel')
+const FollowerModel = require('../models/FollowerModel')
+const NotificationModel = require('../models/NotificationModel')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+const isEmail = require('validator/lib/isEmail')
+const userPng = 'https://res.cloudinary.com/indersingh/image/upload/v1593464618/App/user_mklcpl.png'
 
-router.get("/:username", async (req, res) => {
-  const { username } = req.params;
+const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/
 
-  try {
-    if (username.length < 1) return res.status(401).send("Invalid");
+router.get('/:username', async (req, res) => {
+	const {username} = req.params
 
-    if (!regexUserName.test(username)) return res.status(401).send("Invalid");
+	try {
+		if (username.length < 1) return res.status(401).send('Invalid')
 
-    const user = await UserModel.findOne({ username: username.toLowerCase() });
+		if (!regexUserName.test(username)) return res.status(401).send('Invalid')
 
-    if (user) return res.status(401).send("Username already taken");
+		const user = await UserModel.findOne({username: username.toLowerCase()})
 
-    return res.status(200).send("Available");
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send(`Server error`);
-  }
-});
+		if (user) return res.status(401).send('Username already taken')
 
-router.post("/", async (req, res) => {
-  const {
-    name,
-    email,
-    username,
-    password,
-    bio,
-    facebook,
-    youtube,
-    twitter,
-    instagram
-  } = req.body.user;
+		return res.status(200).send('Available')
+	} catch (error) {
+		console.error(error)
+		return res.status(500).send(`Server error`)
+	}
+})
 
-  if (!isEmail(email)) return res.status(401).send("Invalid Email");
+router.post('/', async (req, res) => {
+	const {
+		name,
+		email,
+		username,
+		password,
+		bio,
+		facebook,
+		youtube,
+		twitter,
+		instagram,
+	} = req.body.user
 
-  if (password.length < 6) {
-    return res.status(401).send("Password must be atleast 6 characters");
-  }
+	if (!isEmail(email)) return res.status(401).send('Invalid Email')
 
-  try {
-    let user;
-    user = await UserModel.findOne({ email: email.toLowerCase() });
-    if (user) {
-      return res.status(401).send("User already registered");
-    }
+	if (password.length < 6) {
+		return res.status(401).send('Password must be atleast 6 characters')
+	}
 
-    user = new UserModel({
-      name,
-      email: email.toLowerCase(),
-      username: username.toLowerCase(),
-      password,
-      profilePicUrl: req.body.profilePicUrl || userPng
-    });
+	try {
+		let user
+		user = await UserModel.findOne({email: email.toLowerCase()})
+		if (user) {
+			return res.status(401).send('User already registered')
+		}
 
-    user.password = await bcrypt.hash(password, 10);
-    await user.save();
+		user = new UserModel({
+			name,
+			email: email.toLowerCase(),
+			username: username.toLowerCase(),
+			password,
+			profilePicUrl: req.body.profilePicUrl || userPng,
+		})
 
-    let profileFields = {};
-    profileFields.user = user._id;
+		user.password = await bcrypt.hash(password, 10)
+		await user.save()
 
-    profileFields.bio = bio;
+		let profileFields = {}
+		profileFields.user = user._id
 
-    profileFields.social = {};
-    if (facebook) profileFields.social.facebook = facebook;
-    if (youtube) profileFields.social.youtube = youtube;
-    if (instagram) profileFields.social.instagram = instagram;
-    if (twitter) profileFields.social.twitter = twitter;
+		profileFields.bio = bio
 
-    await new ProfileModel(profileFields).save();
-    await new FollowerModel({ user: user._id, followers: [], following: [] }).save();
+		profileFields.social = {}
+		if (facebook) profileFields.social.facebook = facebook
+		if (youtube) profileFields.social.youtube = youtube
+		if (instagram) profileFields.social.instagram = instagram
+		if (twitter) profileFields.social.twitter = twitter
 
-    const payload = { userId: user._id };
-    jwt.sign(payload, process.env.jwtSecret, { expiresIn: "2d" }, (err, token) => {
-      if (err) throw err;
-      res.status(200).json(token);
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send(`Server error`);
-  }
-});
+		await new ProfileModel(profileFields).save()
+		await new FollowerModel({user: user._id, followers: [], following: []}).save()
+		await new NotificationModel({user: user._id, notifications: []}).save()
 
-module.exports = router;
+		const payload = {userId: user._id}
+		jwt.sign(payload, process.env.jwtSecret, {expiresIn: '2d'}, (err, token) => {
+			if (err) throw err
+			res.status(200).json(token)
+		})
+	} catch (error) {
+		console.error(error)
+		return res.status(500).send(`Server error`)
+	}
+})
+
+module.exports = router
