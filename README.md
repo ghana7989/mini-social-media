@@ -1,4 +1,4 @@
-You can click the link : https://inder-social-media2.herokuapp.com/ for deployed version
+You can click the link : https://inder-social-media.herokuapp.com/ for deployed version
 
 If deployed version is not working or setup locally, do the following steps:
 
