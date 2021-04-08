@@ -17,17 +17,13 @@ nextApp.prepare().then(() => {
 	app.use('/api/signup', require('./api/signup'))
 	app.use('/api/auth', require('./api/auth'))
 	app.use('/api/search', require('./api/search'))
-  app.use('/api/posts', require('./api/posts'))
+	app.use('/api/posts', require('./api/posts'))
+	app.use('/api/profile', require('./api/profile'))
 
 	app.all('*', (req, res) => handle(req, res))
 
 	server.listen(PORT, err => {
-		console.log(`Express server running ${PORT}`)
+		if (err) throw err
+		console.log('Express server running')
 	})
-})
-process.on('uncaughtException', err => {
-	console.log('uncaughtException! shutting down the server...')
-	console.error(err)
-	console.log(err.name, err.message)
-	process.exit(1)
 })
