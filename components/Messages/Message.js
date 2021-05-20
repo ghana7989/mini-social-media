@@ -1,46 +1,42 @@
-import React, { useState } from "react";
-import { Icon, Popup } from "semantic-ui-react";
-import calculateTime from "../../utils/calculateTime";
+/** @format */
 
-function Message({ message, user, deleteMsg, bannerProfilePic, divRef }) {
-  const [deleteIcon, showDeleteIcon] = useState(false);
+import React, {useState} from 'react'
+import {Icon, Popup} from 'semantic-ui-react'
+import calculateTime from '../../utils/calculateTime'
 
-  const ifYouSender = message.sender === user._id;
+function Message({message, user, deleteMsg, bannerProfilePic, divRef}) {
+	const [deleteIcon, showDeleteIcon] = useState(false)
 
-  return (
-    <div className="bubbleWrapper" ref={divRef}>
-      <div
-        className={ifYouSender ? "inlineContainer own" : "inlineContainer"}
-        onClick={() => ifYouSender && showDeleteIcon(!deleteIcon)}
-      >
-        <img
-          className="inlineIcon"
-          src={ifYouSender ? user.profilePicUrl : bannerProfilePic}
-        />
+	const ifYouSender = message.sender === user._id
 
-        <div className={ifYouSender ? "ownBubble own" : "otherBubble other"}>
-          {message.msg}
-        </div>
+	return (
+		<div className='bubbleWrapper' ref={divRef}>
+			<div
+				className={ifYouSender ? 'inlineContainer own' : 'inlineContainer'}
+				onClick={() => ifYouSender && showDeleteIcon(!deleteIcon)}>
+				<img className='inlineIcon' src={ifYouSender ? user?.profilePicUrl : bannerProfilePic} />
 
-        {deleteIcon && (
-          <Popup
-            trigger={
-              <Icon
-                name="trash"
-                color="red"
-                style={{ cursor: "pointer" }}
-                onClick={() => deleteMsg(message._id)}
-              />
-            }
-            content="This will only delete the message from your inbox!"
-            position="top right"
-          />
-        )}
-      </div>
+				<div className={ifYouSender ? 'ownBubble own' : 'otherBubble other'}>{message.msg}</div>
 
-      <span className={ifYouSender ? "own" : "other"}>{calculateTime(message.date)}</span>
-    </div>
-  );
+				{deleteIcon && (
+					<Popup
+						trigger={
+							<Icon
+								name='trash'
+								color='red'
+								style={{cursor: 'pointer'}}
+								onClick={() => deleteMsg(message._id)}
+							/>
+						}
+						content='This will only delete the message from your inbox!'
+						position='top right'
+					/>
+				)}
+			</div>
+
+			<span className={ifYouSender ? 'own' : 'other'}>{calculateTime(message.date)}</span>
+		</div>
+	)
 }
 
-export default Message;
+export default Message

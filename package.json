@@ -1,5 +1,5 @@
 {
-  "name": "social-media",
+  "name": "inder-social-media",
   "version": "0.1.0",
   "private": false,
   "scripts": {
@@ -25,6 +25,7 @@
     "nookies": "^2.3.0",
     "nprogress": "^0.2.0",
     "react": "16.13.1",
+    "react-cropper": "^2.1.7",
     "react-dom": "16.13.1",
     "react-infinite-scroll-component": "6.0.0",
     "react-moment": "^0.9.7",
@@ -35,5 +36,9 @@
     "socket.io-client": "^2.3.0",
     "uuid": "^8.2.0",
     "validator": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.6",
+    "@types/socket.io-client": "^3.0.0"
   }
 }
