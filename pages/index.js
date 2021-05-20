@@ -156,9 +156,7 @@ Index.getInitialProps = async ctx => {
 			params: {pageNumber: 1},
 		})
 
-		if (!!res.data.length) {
-			destroyCookie(ctx, 'token')
-		}
+		
 		return {postsData: res.data}
 	} catch (error) {
 		return {errorLoading: true}
