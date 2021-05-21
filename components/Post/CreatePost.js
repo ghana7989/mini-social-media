@@ -32,6 +32,12 @@ function CreatePost({user, setPosts}) {
 		setNewPost(prev => ({...prev, [name]: value}))
 	}
 
+	const handleRemoveUploadedImage = () => {
+		setMedia(null)
+		setMediaPreview(null)
+		setShowModal(false)
+	}
+
 	const addStyles = () => ({
 		textAlign: 'center',
 		height: '150px',
@@ -152,6 +158,14 @@ function CreatePost({user, setPosts}) {
 							primary
 							circular
 							onClick={() => setShowModal(true)}
+						/>
+						<Button
+							icon='trash'
+							content='Remove Uploaded Image'
+							type='button'
+							color='red'
+							circular
+							onClick={handleRemoveUploadedImage}
 						/>
 					</>
 				)}
